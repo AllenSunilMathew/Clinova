@@ -1,111 +1,135 @@
-import React from 'react';
-import { Link } from "react-router-dom";
+// Header.jsx
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
-export default function Header() {
+function Header() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    setIsLoggedIn(!!token);
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
+    localStorage.removeItem("userBookings"); // optional: clear user bookings
+    setIsLoggedIn(false);
+    navigate("/login");
+  };
+
+  const handleProfile = () => {
+    navigate("/user");
+    setShowProfileMenu(false);
+  };
+
   return (
-    <>
-      <header className="header">
-        <div className="logo-area">
-          <img
-            className="logo-img"
-            src="https://static.vecteezy.com/system/resources/previews/025/945/079/non_2x/hospital-health-medical-medicine-logo-design-vector.jpg"
-            alt="Clinova Logo"
-          />
-        <Link to={"/"}>  <h2 className="logo-text">Clinova</h2></Link>
-        </div>
-
-        <nav className="nav">
-          <Link to="/">Home</Link>
-          <Link to="/about">About</Link>
-          <Link to="/service">Services</Link>
-          <Link to="/contact">Contact</Link>
-          <Link to="/login" className="login-btn">Login</Link>
-          <Link to="/appoinment" className="cta-btn">Book Now</Link>
-        </nav>
-      </header>
+    <header style={styles.header}>
+      <div style={styles.logo}>
+        <Link to="/" style={styles.logoText}>Clinova</Link>
+      </div>
+      <nav style={styles.nav}>
+        <Link to="/" style={styles.navLink}>Home</Link>
+        <Link to="/about" style={styles.navLink}>About</Link>
+        <Link to="/service" style={styles.navLink}>Services</Link>
+        <Link to="/contact" style={styles.navLink}>Contact</Link>
+        <Link to="/lab" style={styles.navLink}>Lab</Link>
+        {isLoggedIn && <Link to="/appoinment" style={styles.navLink}>Book Appointment</Link>}
+      </nav>
+      <div style={styles.actions}>
+        {!isLoggedIn ? (
+          <Link to="/login" style={styles.loginBtn}>Login</Link>
+        ) : (
+          <div style={styles.profileWrapper}>
+            <img
+              src="https://i.pravatar.cc/40"
+              alt="Profile"
+              style={styles.profileIcon}
+              onClick={() => setShowProfileMenu(!showProfileMenu)}
+            />
+            {showProfileMenu && (
+              <div style={styles.dropdown}>
+                <button onClick={handleProfile} style={styles.dropdownBtn}>Full Profile</button>
+                <button onClick={handleLogout} style={styles.dropdownBtn}>Logout</button>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
 
       <style>{`
-        .header {
-          position: sticky;
-          top: 0;
-          z-index: 1000;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 10px 40px;
-          backdrop-filter: blur(10px);
-          background: rgba(255, 255, 255, 0.85);
-          box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-        }
-
-        .logo-area {
-          display: flex;
-          align-items: center;
-          gap: 10px;
-        }
-
-        .logo-img {
-          width: 55px;
-          height: 55px;
-          border-radius: 50%;
-          object-fit: cover;
-          border: 2px solid #3A8DFF;
-        }
-
-        .logo-text {
-          font-size: 1.8rem;
-          font-weight: bold;
-          color: #3A8DFF;
-        }
-
-        .nav a {
-          margin-left: 22px;
-          text-decoration: none;
-          color: #333;
-          font-weight: 500;
-          position: relative;
-        }
-
-        .nav a::after {
-          content: '';
-          position: absolute;
-          width: 0;
-          height: 2px;
-          bottom: -4px;
-          left: 0;
-          background: #3A8DFF;
-          transition: width 0.3s ease;
-        }
-
-        .nav a:hover::after {
-          width: 100%;
-        }
-
-        .login-btn {
-          color: #3A8DFF;
-          font-weight: 600;
-        }
-
-        .cta-btn {
-          margin-left: 25px;
-          padding: 8px 18px;
-          background: #3A8DFF;
-          color: white !important;
-          border-radius: 20px;
-          font-weight: 600;
-          box-shadow: 0 5px 15px rgba(58,141,255,0.4);
-        }
-
-        .cta-btn:hover {
-          background: #1f6fe0;
-        }
-
         @media (max-width: 768px) {
-          .nav {
-            display: none;
+          header {
+            flex-direction: column;
+            align-items: flex-start;
+          }
+          nav {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
           }
         }
       `}</style>
-    </>
+    </header>
   );
 }
+
+const styles = {
+  header: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: "15px 30px",
+    background: "#3A8DFF",
+    color: "#fff",
+    position: "sticky",
+    top: 0,
+    zIndex: 999,
+  },
+  logoText: { color: "#fff", fontWeight: "bold", textDecoration: "none", fontSize: "1.5rem" },
+  nav: { display: "flex", gap: "20px" },
+  navLink: { color: "#fff", textDecoration: "none", fontWeight: 500 },
+  actions: { display: "flex", alignItems: "center" },
+  loginBtn: {
+    padding: "8px 15px",
+    borderRadius: "6px",
+    background: "#10b981",
+    border: "none",
+    cursor: "pointer",
+    color: "#fff",
+    textDecoration: "none",
+  },
+  profileWrapper: { position: "relative" },
+  profileIcon: {
+    width: "40px",
+    height: "40px",
+    borderRadius: "50%",
+    cursor: "pointer",
+  },
+  dropdown: {
+    position: "absolute",
+    top: "50px",
+    right: 0,
+    background: "#fff",
+    color: "#333",
+    borderRadius: "8px",
+    boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
+    display: "flex",
+    flexDirection: "column",
+    minWidth: "150px",
+  },
+  dropdownBtn: {
+    padding: "10px",
+    border: "none",
+    background: "transparent",
+    textAlign: "left",
+    cursor: "pointer",
+    fontWeight: 500,
+    width: "100%",
+    borderBottom: "1px solid #eee",
+  },
+};
+
+export default Header;

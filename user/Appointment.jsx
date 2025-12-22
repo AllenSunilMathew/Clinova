@@ -1,32 +1,66 @@
-import React, { useState } from 'react';
-import Header from '../common/Header';
+import React, { useState, useEffect } from "react";
+import Header from "../common/Header";
+import { useNavigate } from "react-router-dom";
 
 function Appointment() {
-  const [patientName, setPatientName] = useState('');
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
-  const [date, setDate] = useState('');
-  const [time, setTime] = useState('');
-  const [department, setDepartment] = useState('');
-  const [toast, setToast] = useState('');
+  const navigate = useNavigate();
+
+  const [patientName, setPatientName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [date, setDate] = useState("");
+  const [time, setTime] = useState("");
+  const [department, setDepartment] = useState("");
+  const [toast, setToast] = useState("");
+
+  // Check login on page load
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const name = localStorage.getItem("userName");
+    if (!token) {
+      showToast("⚠️ Please login first");
+      setTimeout(() => navigate("/login"), 2000);
+    } else {
+      setPatientName(name || "");
+    }
+  }, [navigate]);
 
   const showToast = (message) => {
     setToast(message);
-    setTimeout(() => setToast(''), 2500);
+    setTimeout(() => setToast(""), 2500);
   };
 
   const handleSubmit = () => {
     if (!patientName || !email || !phone || !date || !time || !department) {
-      showToast('⚠️ Please fill all fields');
+      showToast("⚠️ Please fill all fields");
       return;
     }
-    showToast('✅ Appointment booked successfully');
-    // Here you can add logic to save appointment to DB
+
+    // Here you can send appointment to backend API
+    // For now, we store in localStorage for demonstration
+    let bookings = JSON.parse(localStorage.getItem("bookings")) || [];
+    bookings.push({
+      patientName,
+      email,
+      phone,
+      date,
+      time,
+      department,
+      status: "Confirmed",
+    });
+    localStorage.setItem("bookings", JSON.stringify(bookings));
+
+    showToast("✅ Appointment booked successfully");
+
+    // Redirect to user page after 2 seconds
+    setTimeout(() => {
+      navigate("/user");
+    }, 2000);
   };
 
   return (
     <>
-    <Header/>
+      <Header />
       <section className="appointment-section">
         <div className="appointment-container">
           <h2>Book an Appointment</h2>
@@ -60,7 +94,10 @@ function Appointment() {
             onChange={(e) => setTime(e.target.value)}
           />
 
-          <select value={department} onChange={(e) => setDepartment(e.target.value)}>
+          <select
+            value={department}
+            onChange={(e) => setDepartment(e.target.value)}
+          >
             <option value="">Select Department</option>
             <option value="General">General</option>
             <option value="Cardiology">Cardiology</option>
