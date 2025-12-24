@@ -21,7 +21,7 @@ function Appointment() {
       showToast("⚠️ Please login first");
       setTimeout(() => navigate("/login"), 2000);
     } else {
-      setPatientName(name || "");
+      setPatientName("");
     }
   }, [navigate]);
 
@@ -107,10 +107,26 @@ function Appointment() {
           </select>
 
           <button onClick={handleSubmit}>Book Appointment</button>
+<button className=" btn btn-danger text-black" onClick={() => navigate("/lab")}>
+  Lab
+</button>
+
         </div>
       </section>
 
-      {toast && <div className="toast">{toast}</div>}
+      {toast && <div className="toast">{toast}
+        
+
+
+        </div>}
+
+
+
+
+
+
+
+
 
       <style>{`
         .appointment-section {

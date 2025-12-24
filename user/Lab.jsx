@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { useNavigate } from "react-router-dom";
+
 
 function Lab() {
   const labTests = [
@@ -27,6 +29,7 @@ function Lab() {
   const [patientName, setPatientName] = useState('');
   const [selectedTests, setSelectedTests] = useState([]);
   const [toast, setToast] = useState('');
+const navigate = useNavigate();
 
   const showToast = (message) => {
     setToast(message);
@@ -41,17 +44,23 @@ function Lab() {
     setSelectedTests([...selectedTests, test]);
   };
 
-  const handleSubmit = () => {
-    if (!patientName.trim()) {
-      showToast('⚠️ Please enter patient name');
-      return;
-    }
-    if (selectedTests.length === 0) {
-      showToast('⚠️ Please select at least one test');
-      return;
-    }
-    showToast('✅ Lab tests submitted successfully');
-  };
+const handleSubmit = () => {
+  if (!patientName.trim()) {
+    showToast('⚠️ Please enter patient name');
+    return;
+  }
+  if (selectedTests.length === 0) {
+    showToast('⚠️ Please select at least one test');
+    return;
+  }
+
+  showToast('✅ Lab tests submitted successfully');
+
+  setTimeout(() => {
+    navigate('/');
+  }, 1500);
+};
+
 
   const totalAmount = selectedTests.reduce((sum, test) => sum + test.price, 0);
 

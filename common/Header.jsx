@@ -17,7 +17,7 @@ function Header() {
     localStorage.removeItem("role");
     localStorage.removeItem("userBookings"); // optional: clear user bookings
     setIsLoggedIn(false);
-    navigate("/login");
+    navigate("/");
   };
 
   const handleProfile = () => {
@@ -35,7 +35,6 @@ function Header() {
         <Link to="/about" style={styles.navLink}>About</Link>
         <Link to="/service" style={styles.navLink}>Services</Link>
         <Link to="/contact" style={styles.navLink}>Contact</Link>
-        <Link to="/lab" style={styles.navLink}>Lab</Link>
         {isLoggedIn && <Link to="/appoinment" style={styles.navLink}>Book Appointment</Link>}
       </nav>
       <div style={styles.actions}>

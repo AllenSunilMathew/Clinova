@@ -32,7 +32,7 @@ function Login() {
         showToast("✅ Login successful");
         setTimeout(() => {
           if (data.role === "admin") navigate("/admin");
-          else navigate("/user");
+          else navigate("/");
         }, 1500);
       } else {
         showToast(data.message || "❌ Login failed");
@@ -45,21 +45,118 @@ function Login() {
   return (
     <>
       <Header />
-      <section style={{ padding: "60px 20px", minHeight: "80vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
-        <div style={{ width: "100%", maxWidth: "400px", background: "#fff", padding: "30px", borderRadius: "16px", boxShadow: "0 8px 20px rgba(0,0,0,0.15)", display: "flex", flexDirection: "column", gap: "12px" }}>
-          <h2>Login</h2>
-          <input type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} />
-          <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} />
-          <select value={role} onChange={e => setRole(e.target.value)}>
+
+      {/* Background */}
+      <section
+        style={{
+          minHeight: "90vh",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          background: "linear-gradient(135deg, #667eea, #764ba2)",
+          padding: "20px",
+        }}
+      >
+        {/* Card */}
+        <div
+          style={{
+            width: "100%",
+            maxWidth: "420px",
+            padding: "35px",
+            borderRadius: "20px",
+            background: "rgba(255,255,255,0.15)",
+            backdropFilter: "blur(12px)",
+            WebkitBackdropFilter: "blur(12px)",
+            boxShadow: "0 20px 40px rgba(0,0,0,0.25)",
+            display: "flex",
+            flexDirection: "column",
+            gap: "16px",
+            color: "#fff",
+          }}
+        >
+          <h2 style={{ textAlign: "center", fontSize: "28px", marginBottom: "10px" }}>
+            Welcome Back 👋
+          </h2>
+
+          <input
+            type="email"
+            placeholder="Email Address"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            style={inputStyle}
+          />
+
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            style={inputStyle}
+          />
+
+          <select
+            value={role}
+            onChange={(e) => setRole(e.target.value)}
+            style={{ ...inputStyle, color: "#333" }}
+          >
             <option value="user">User</option>
             <option value="admin">Admin</option>
           </select>
-          <button onClick={handleLogin}>Login</button>
+
+<a className="text-center" href="/register"> New user??  register</a>
+          <button
+            onClick={handleLogin}
+            style={{
+              marginTop: "10px",
+              padding: "12px",
+              borderRadius: "12px",
+              border: "none",
+              fontSize: "16px",
+              fontWeight: "600",
+              color: "#fff",
+              cursor: "pointer",
+              background: "linear-gradient(135deg, #43cea2, #185a9d)",
+              transition: "all 0.3s ease",
+            }}
+            onMouseOver={(e) => (e.target.style.transform = "scale(1.05)")}
+            onMouseOut={(e) => (e.target.style.transform = "scale(1)")}
+          >
+            Login
+          </button>
         </div>
       </section>
-      {toast && <div style={{ position: "fixed", bottom: "30px", right: "30px", background: "#3A8DFF", color: "#fff", padding: "12px 20px", borderRadius: "8px" }}>{toast}</div>}
+
+      {/* Toast */}
+      {toast && (
+        <div
+          style={{
+            position: "fixed",
+            bottom: "30px",
+            right: "30px",
+            background: "linear-gradient(135deg, #43cea2, #185a9d)",
+            color: "#fff",
+            padding: "14px 22px",
+            borderRadius: "12px",
+            boxShadow: "0 10px 25px rgba(0,0,0,0.3)",
+            fontWeight: "500",
+            animation: "fadeIn 0.3s ease",
+          }}
+        >
+          {toast}
+        </div>
+      )}
     </>
   );
 }
+
+const inputStyle = {
+  padding: "12px 14px",
+  borderRadius: "12px",
+  border: "none",
+  outline: "none",
+  fontSize: "14px",
+  background: "rgba(255,255,255,0.9)",
+  boxShadow: "inset 0 2px 6px rgba(0,0,0,0.15)",
+};
 
 export default Login;

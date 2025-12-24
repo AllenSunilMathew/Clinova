@@ -44,26 +44,153 @@ function Register() {
   return (
     <>
       <Header />
+
       <section style={sectionStyle}>
-        <div style={containerStyle}>
-          <h2>Register</h2>
-          <input type="text" placeholder="Name" value={name} onChange={e => setName(e.target.value)} />
-          <input type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} />
-          <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} />
-          <select value={role} onChange={e => setRole(e.target.value)}>
-            <option value="user">User</option>
-            <option value="admin">Admin</option>
-          </select>
-          <button onClick={handleRegister}>Register</button>
+        <div style={cardWrapper}>
+          
+          {/* Image Section */}
+          <div style={imageSection}>
+            <img
+              src="https://illustrations.popsy.co/white/user-login.svg"
+              alt="register"
+              style={{ width: "100%", maxWidth: "280px" }}
+            />
+            <h3 style={{ marginTop: "20px" }}>Join Us Today 🚀</h3>
+            <p style={{ fontSize: "14px", opacity: 0.8 }}>
+              Create an account and unlock all features
+            </p>
+          </div>
+
+          {/* Form Section */}
+          <div style={formSection}>
+            <h2 style={{ marginBottom: "10px" }}>Create Account</h2>
+
+            <input
+              type="text"
+              placeholder="Full Name"
+              value={name}
+              onChange={e => setName(e.target.value)}
+              style={inputStyle}
+            />
+
+            <input
+              type="email"
+              placeholder="Email Address"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              style={inputStyle}
+            />
+
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              style={inputStyle}
+            />
+
+            <select
+              value={role}
+              onChange={e => setRole(e.target.value)}
+              style={{ ...inputStyle, color: "#333" }}
+            >
+              <option value="user">User</option>
+              <option value="admin">Admin</option>
+            </select>
+
+            <button
+              onClick={handleRegister}
+              style={buttonStyle}
+              onMouseOver={e => (e.target.style.transform = "scale(1.05)")}
+              onMouseOut={e => (e.target.style.transform = "scale(1)")}
+            >
+              Register
+            </button>
+          </div>
         </div>
       </section>
+
       {toast && <div style={toastStyle}>{toast}</div>}
     </>
   );
 }
 
-const sectionStyle = { display: "flex", justifyContent: "center", alignItems: "center", minHeight: "80vh", padding: "40px 20px", background: "#f0f4f8" };
-const containerStyle = { display: "flex", flexDirection: "column", gap: "12px", width: "100%", maxWidth: "400px", padding: "30px", background: "#fff", borderRadius: "16px", boxShadow: "0 8px 20px rgba(0,0,0,0.15)" };
-const toastStyle = { position: "fixed", bottom: "30px", right: "30px", background: "#3A8DFF", color: "#fff", padding: "12px 20px", borderRadius: "8px", fontSize: "14px", zIndex: 999 };
+/* ================= STYLES ================= */
+
+const sectionStyle = {
+  minHeight: "90vh",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  padding: "30px",
+  background: "linear-gradient(135deg, #667eea, #764ba2)",
+};
+
+const cardWrapper = {
+  width: "100%",
+  maxWidth: "900px",
+  display: "flex",
+  borderRadius: "22px",
+  overflow: "hidden",
+  background: "rgba(255,255,255,0.15)",
+  backdropFilter: "blur(14px)",
+  boxShadow: "0 25px 50px rgba(0,0,0,0.3)",
+};
+
+const imageSection = {
+  flex: 1,
+  padding: "40px",
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "center",
+  alignItems: "center",
+  color: "#fff",
+  textAlign: "center",
+};
+
+const formSection = {
+  flex: 1,
+  padding: "40px",
+  background: "rgba(255,255,255,0.95)",
+  display: "flex",
+  flexDirection: "column",
+  gap: "14px",
+};
+
+const inputStyle = {
+  padding: "12px 14px",
+  borderRadius: "12px",
+  border: "none",
+  outline: "none",
+  fontSize: "14px",
+  background: "#f3f4f6",
+  boxShadow: "inset 0 2px 6px rgba(0,0,0,0.1)",
+};
+
+const buttonStyle = {
+  marginTop: "10px",
+  padding: "12px",
+  borderRadius: "12px",
+  border: "none",
+  fontSize: "16px",
+  fontWeight: "600",
+  color: "#fff",
+  cursor: "pointer",
+  background: "linear-gradient(135deg, #43cea2, #185a9d)",
+  transition: "all 0.3s ease",
+};
+
+const toastStyle = {
+  position: "fixed",
+  bottom: "30px",
+  right: "30px",
+  background: "linear-gradient(135deg, #43cea2, #185a9d)",
+  color: "#fff",
+  padding: "14px 22px",
+  borderRadius: "12px",
+  fontSize: "14px",
+  boxShadow: "0 10px 25px rgba(0,0,0,0.3)",
+  zIndex: 999,
+};
 
 export default Register;
