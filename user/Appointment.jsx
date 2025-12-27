@@ -1,215 +1,114 @@
-import React, { useState, useEffect } from "react";
-import Header from "../common/Header";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { fetchDoctors, bookAppointment } from "../services/AllApi";
 
 function Appointment() {
-  const navigate = useNavigate();
-
+  const [user, setUser] = useState({});
+  const [departments] = useState(["General", "Cardiology", "Orthopedics", "Neurology", "Dermatology"]);
+  const [selectedDept, setSelectedDept] = useState("");
+  const [doctors, setDoctors] = useState([]);
+  const [selectedDoctor, setSelectedDoctor] = useState("");
   const [patientName, setPatientName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
-  const [department, setDepartment] = useState("");
   const [toast, setToast] = useState("");
 
-  // Check login on page load
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    const name = localStorage.getItem("userName");
-    if (!token) {
-      showToast("⚠️ Please login first");
-      setTimeout(() => navigate("/login"), 2000);
-    } else {
-      setPatientName("");
+    const savedUser = JSON.parse(localStorage.getItem("user"));
+    if (savedUser) {
+      setUser(savedUser);
+      setPatientName(savedUser.name);
+      setEmail(savedUser.email);
     }
-  }, [navigate]);
+  }, []);
 
-  const showToast = (message) => {
-    setToast(message);
+  useEffect(() => {
+    if (selectedDept) {
+      fetchDoctors(selectedDept).then(setDoctors);
+      setSelectedDoctor("");
+    }
+  }, [selectedDept]);
+
+  const showToast = (msg) => {
+    setToast(msg);
     setTimeout(() => setToast(""), 2500);
   };
 
-  const handleSubmit = () => {
-    if (!patientName || !email || !phone || !date || !time || !department) {
+  const handleBooking = async () => {
+    if (!patientName || !email || !phone || !selectedDept || !selectedDoctor || !date || !time) {
       showToast("⚠️ Please fill all fields");
       return;
     }
-
-    // Here you can send appointment to backend API
-    // For now, we store in localStorage for demonstration
-    let bookings = JSON.parse(localStorage.getItem("bookings")) || [];
-    bookings.push({
+    const bookingData = {
       patientName,
       email,
       phone,
+      department: selectedDept,
+      doctor: selectedDoctor,
       date,
       time,
-      department,
-      status: "Confirmed",
-    });
-    localStorage.setItem("bookings", JSON.stringify(bookings));
-
-    showToast("✅ Appointment booked successfully");
-
-    // Redirect to user page after 2 seconds
-    setTimeout(() => {
-      navigate("/user");
-    }, 2000);
+      userId: user._id,
+    };
+    const res = await bookAppointment(bookingData);
+    if (res.success) {
+      showToast("✅ Appointment booked successfully");
+      // Reset form
+      setSelectedDept("");
+      setSelectedDoctor("");
+      setDate("");
+      setTime("");
+      setPhone("");
+    } else {
+      showToast("❌ Booking failed");
+    }
   };
 
   return (
-    <>
-      <Header />
-      <section className="appointment-section">
-        <div className="appointment-container">
-          <h2>Book an Appointment</h2>
+    <section className="appointment-section">
+      <div className="appointment-container">
+        <h2>Book an Appointment</h2>
 
-          <input
-            type="text"
-            placeholder="Patient Name"
-            value={patientName}
-            onChange={(e) => setPatientName(e.target.value)}
-          />
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <input
-            type="tel"
-            placeholder="Phone"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-          />
-          <input
-            type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-          />
-          <input
-            type="time"
-            value={time}
-            onChange={(e) => setTime(e.target.value)}
-          />
+        <input type="text" placeholder="Patient Name" value={patientName} onChange={(e) => setPatientName(e.target.value)} />
+        <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
+        <input type="tel" placeholder="Phone Number" value={phone} onChange={(e) => setPhone(e.target.value)} />
 
-          <select
-            value={department}
-            onChange={(e) => setDepartment(e.target.value)}
-          >
-            <option value="">Select Department</option>
-            <option value="General">General</option>
-            <option value="Cardiology">Cardiology</option>
-            <option value="Orthopedics">Orthopedics</option>
-            <option value="Neurology">Neurology</option>
-            <option value="Dermatology">Dermatology</option>
+        <select value={selectedDept} onChange={(e) => setSelectedDept(e.target.value)}>
+          <option value="">Select Department</option>
+          {departments.map((dept, i) => (
+            <option key={i} value={dept}>{dept}</option>
+          ))}
+        </select>
+
+        {selectedDept && (
+          <select value={selectedDoctor} onChange={(e) => setSelectedDoctor(e.target.value)}>
+            <option value="">Select Doctor</option>
+            {doctors.map((doc, i) => (
+              <option key={i} value={doc.name}>{doc.name}</option>
+            ))}
           </select>
+        )}
 
-          <button onClick={handleSubmit}>Book Appointment</button>
-<button className=" btn btn-danger text-black" onClick={() => navigate("/lab")}>
-  Lab
-</button>
-
+        <div className="row">
+          <input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+          <input type="time" value={time} onChange={(e) => setTime(e.target.value)} />
         </div>
-      </section>
 
-      {toast && <div className="toast">{toast}
-        
-
-
-        </div>}
-
-
-
-
-
-
-
-
+        <button className="primary-btn" onClick={handleBooking}>Book Appointment</button>
+      {toast && <div className="toast">{toast}</div>}
+      </div>
 
       <style>{`
-        .appointment-section {
-          position: relative;
-          padding: 80px 20px;
-          min-height: 100vh;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          background: url('https://images.unsplash.com/photo-1588776814546-6e2c1ee7f8c0?auto=format&fit=crop&w=1950&q=80') no-repeat center center/cover;
-          overflow: hidden;
-        }
-
-        .appointment-container {
-          position: relative;
-          z-index: 1;
-          width: 100%;
-          max-width: 500px;
-          padding: 40px;
-          background: rgba(255,255,255,0.2);
-          backdrop-filter: blur(12px);
-          border-radius: 20px;
-          box-shadow: 0 15px 35px rgba(0,0,0,0.2);
-          display: flex;
-          flex-direction: column;
-          gap: 15px;
-        }
-
-        .appointment-container h2 {
-          text-align: center;
-          color: #3A8DFF;
-          margin-bottom: 20px;
-        }
-
-        .appointment-container input,
-        .appointment-container select {
-          padding: 12px;
-          border-radius: 8px;
-          border: 1px solid #ccc;
-          outline: none;
-          transition: 0.3s;
-        }
-
-        .appointment-container input:focus,
-        .appointment-container select:focus {
-          border-color: #3A8DFF;
-          box-shadow: 0 0 10px rgba(58,141,255,0.3);
-        }
-
-        .appointment-container button {
-          padding: 12px;
-          border: none;
-          border-radius: 8px;
-          background: #3A8DFF;
-          color: white;
-          font-weight: bold;
-          cursor: pointer;
-          transition: 0.3s;
-        }
-
-        .appointment-container button:hover {
-          background: #0066cc;
-        }
-
-        .toast {
-          position: fixed;
-          bottom: 30px;
-          right: 30px;
-          background: #e50101ff;
-          color: white;
-          padding: 12px 20px;
-          border-radius: 8px;
-          font-size: 14px;
-          box-shadow: 0 6px 20px rgba(0,0,0,0.2);
-        }
-
-        @media (max-width: 600px) {
-          .appointment-container {
-            padding: 20px;
-          }
-        }
+        .appointment-section { min-height: 90vh; display: flex; justify-content: center; align-items: center; padding: 30px; background: linear-gradient(135deg, #3A8DFF, #75A0F2); }
+        .appointment-container { width: 100%; max-width: 500px; padding: 30px; border-radius: 20px; background: rgba(255,255,255,0.15); backdrop-filter: blur(12px); display: flex; flex-direction: column; gap: 12px; color: #fff; }
+        input, select { padding: 12px; border-radius: 12px; border: none; font-size: 14px; background: rgba(255,255,255,0.9); color: #333; }
+        .row { display: flex; gap: 10px; }
+        .primary-btn { padding: 12px; border-radius: 14px; border: none; background: linear-gradient(135deg, #43cea2, #185a9d); color: white; font-weight: bold; cursor: pointer; }
+        .primary-btn:hover { transform: scale(1.05); }
+        .toast { position: fixed; bottom: 20px; right: 20px; background: #43cea2; color: white; padding: 10px 18px; border-radius: 12px; }
+        @media(max-width:600px){ .row{ flex-direction: column; } }
       `}</style>
-    </>
+    </section>
   );
 }
 

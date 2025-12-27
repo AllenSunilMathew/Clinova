@@ -1,38 +1,48 @@
-import React from 'react';
-import Header from './Header';
-import Footer from './Footer';
-import { Link } from 'react-router-dom';
+import React from "react";
+import Header from "./Header";
 function Home() {
   return (
     <>
-    <Header/>
+    <Header />
       {/* HERO / PARALLAX SECTION */}
       <section className="home">
         <div className="overlay">
-          <h1>Welcome to <span>Clinova</span></h1>
+          <h1>
+            Welcome to <span>Clinova</span>
+          </h1>
           <p>Your smart healthcare platform for everyone</p>
-        <Link to ={"/appoinment"}>  <button className="cta">Book Appointment</button></Link>
+          <button className="cta">Book Appointment</button>
         </div>
       </section>
 
       {/* FEATURES SECTION */}
       <section className="features">
         <h2>Why Choose Clinova?</h2>
+
         <div className="feature-grid">
           <div className="feature-card">
-            <img src="https://cdn-icons-png.flaticon.com/512/2966/2966327.png" alt="Doctor" />
+            <img
+              src="https://cdn-icons-png.flaticon.com/512/2966/2966327.png"
+              alt="Doctor"
+            />
             <h3>Expert Doctors</h3>
             <p>Consult experienced specialists across departments.</p>
           </div>
 
           <div className="feature-card">
-            <img src="https://cdn-icons-png.flaticon.com/512/3050/3050525.png" alt="Lab" />
+            <img
+              src="https://cdn-icons-png.flaticon.com/512/3050/3050525.png"
+              alt="Lab"
+            />
             <h3>Advanced Labs</h3>
             <p>Accurate diagnostics with modern lab facilities.</p>
           </div>
 
           <div className="feature-card">
-            <img src="https://cdn-icons-png.flaticon.com/512/2919/2919906.png" alt="Appointments" />
+            <img
+              src="https://cdn-icons-png.flaticon.com/512/2919/2919906.png"
+              alt="Appointments"
+            />
             <h3>Easy Appointments</h3>
             <p>Book doctor and lab appointments instantly.</p>
           </div>
@@ -44,24 +54,26 @@ function Home() {
         <div className="content">
           <h2>Healthcare That Cares</h2>
           <p>
-            Clinova combines technology and compassion to deliver quality healthcare,
-            making medical services accessible, efficient, and reliable.
+            Clinova combines technology and compassion to deliver quality
+            healthcare, making medical services accessible, efficient, and
+            reliable.
           </p>
         </div>
       </section>
 
+      {/* DESIGN STYLES */}
       <style>{`
         /* HERO PARALLAX */
         .home {
           height: 90vh;
           background: url('https://images.unsplash.com/photo-1586773860418-d37222d8fce3')
-            center/cover fixed no-repeat;
+            center / cover fixed no-repeat;
           position: relative;
         }
 
         .overlay {
           height: 100%;
-          background: rgba(0,0,0,0.55);
+          background: rgba(0, 0, 0, 0.55);
           display: flex;
           flex-direction: column;
           justify-content: center;
@@ -77,7 +89,7 @@ function Home() {
         }
 
         .overlay h1 span {
-          color: #6CC1FF;
+          color: #6cc1ff;
         }
 
         .overlay p {
@@ -90,14 +102,16 @@ function Home() {
           padding: 12px 28px;
           border: none;
           border-radius: 25px;
-          background: #3A8DFF;
+          background: #3a8dff;
           color: white;
           font-size: 16px;
           cursor: pointer;
+          transition: 0.3s;
         }
 
         .cta:hover {
           background: #1f6fe0;
+          transform: scale(1.05);
         }
 
         /* FEATURES */
@@ -124,7 +138,7 @@ function Home() {
           background: white;
           padding: 30px;
           border-radius: 14px;
-          box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+          box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
           transition: transform 0.3s;
         }
 
@@ -139,7 +153,7 @@ function Home() {
 
         .feature-card h3 {
           margin-bottom: 10px;
-          color: #3A8DFF;
+          color: #3a8dff;
         }
 
         .feature-card p {
@@ -151,13 +165,13 @@ function Home() {
         .parallax-info {
           height: 60vh;
           background: url('https://images.unsplash.com/photo-1579684385127-1ef15d508118')
-            center/cover fixed no-repeat;
+            center / cover fixed no-repeat;
           position: relative;
         }
 
         .parallax-info .content {
           height: 100%;
-          background: rgba(58,141,255,0.75);
+          background: rgba(58, 141, 255, 0.75);
           color: white;
           display: flex;
           flex-direction: column;
@@ -183,7 +197,6 @@ function Home() {
           }
         }
       `}</style>
-      <Footer/>
     </>
   );
 }

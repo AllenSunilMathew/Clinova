@@ -1,23 +1,25 @@
-// Header.jsx
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-function Header() {
+function Header({ toggleTheme, theme }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [userName, setUserName] = useState("");
+  const [language, setLanguage] = useState("en");
+
   const navigate = useNavigate();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
+    const name = localStorage.getItem("name");
     setIsLoggedIn(!!token);
+    setUserName(name || "");
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("role");
-    localStorage.removeItem("userBookings"); // optional: clear user bookings
+    localStorage.clear();
     setIsLoggedIn(false);
-    navigate("/");
+    navigate("/login");
   };
 
   const handleProfile = () => {
@@ -30,14 +32,32 @@ function Header() {
       <div style={styles.logo}>
         <Link to="/" style={styles.logoText}>Clinova</Link>
       </div>
+
       <nav style={styles.nav}>
         <Link to="/" style={styles.navLink}>Home</Link>
         <Link to="/about" style={styles.navLink}>About</Link>
         <Link to="/service" style={styles.navLink}>Services</Link>
         <Link to="/contact" style={styles.navLink}>Contact</Link>
-        {isLoggedIn && <Link to="/appoinment" style={styles.navLink}>Book Appointment</Link>}
+        {isLoggedIn && <Link to="/appointments" style={styles.navLink}>Book Appointment</Link>}
       </nav>
+
       <div style={styles.actions}>
+        {/* Theme toggle */}
+        <button onClick={toggleTheme} style={styles.themeBtn}>
+          {theme === "dark" ? "☀️" : "🌙"}
+        </button>
+
+        {/* Language select */}
+        <select
+          value={language}
+          onChange={(e) => setLanguage(e.target.value)}
+          style={styles.langSelect}
+        >
+          <option value="en">English</option>
+          <option value="hi">Hindi</option>
+          <option value="ml">Malayalam</option>
+        </select>
+
         {!isLoggedIn ? (
           <Link to="/login" style={styles.loginBtn}>Login</Link>
         ) : (
@@ -57,20 +77,6 @@ function Header() {
           </div>
         )}
       </div>
-
-      <style>{`
-        @media (max-width: 768px) {
-          header {
-            flex-direction: column;
-            align-items: flex-start;
-          }
-          nav {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-          }
-        }
-      `}</style>
     </header>
   );
 }
@@ -90,7 +96,7 @@ const styles = {
   logoText: { color: "#fff", fontWeight: "bold", textDecoration: "none", fontSize: "1.5rem" },
   nav: { display: "flex", gap: "20px" },
   navLink: { color: "#fff", textDecoration: "none", fontWeight: 500 },
-  actions: { display: "flex", alignItems: "center" },
+  actions: { display: "flex", alignItems: "center", gap: "10px" },
   loginBtn: {
     padding: "8px 15px",
     borderRadius: "6px",
@@ -128,6 +134,20 @@ const styles = {
     fontWeight: 500,
     width: "100%",
     borderBottom: "1px solid #eee",
+  },
+  themeBtn: {
+    padding: "6px 10px",
+    borderRadius: "6px",
+    cursor: "pointer",
+    background: "#fff",
+    color: "#3A8DFF",
+    fontWeight: "bold",
+  },
+  langSelect: {
+    padding: "6px",
+    borderRadius: "6px",
+    border: "none",
+    cursor: "pointer",
   },
 };
 
