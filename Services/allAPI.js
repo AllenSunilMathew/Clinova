@@ -18,3 +18,5 @@ export const getDoctorsByDepartment = (department) =>
 
 // Fetch user profile info
 export const getUserProfile = () => commonAPI.get("/api/user/profile");
+
+// Alternative version without commonAPI for demonstration

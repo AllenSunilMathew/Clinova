@@ -1,77 +1,90 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 function Header({ toggleTheme, theme }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [showProfileMenu, setShowProfileMenu] = useState(false);
-  const [userName, setUserName] = useState("");
-  const [language, setLanguage] = useState("en");
+  const [showMenu, setShowMenu] = useState(false);
+  const [user, setUser] = useState(null);
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    const name = localStorage.getItem("name");
-    setIsLoggedIn(!!token);
-    setUserName(name || "");
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+    if (storedUser) {
+      setIsLoggedIn(true);
+      setUser(storedUser);
+    }
   }, []);
 
-  const handleLogout = () => {
-    localStorage.clear();
-    setIsLoggedIn(false);
-    navigate("/login");
-  };
+  // Sync login changes
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const storedUser = JSON.parse(localStorage.getItem("user"));
+      if (storedUser) {
+        setIsLoggedIn(true);
+        setUser(storedUser);
+      } else {
+        setIsLoggedIn(false);
+        setUser(null);
+      }
+    };
 
-  const handleProfile = () => {
-    navigate("/user");
-    setShowProfileMenu(false);
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, []);
+
+  const logout = () => {
+    localStorage.removeItem("user");
+    setIsLoggedIn(false);
+    setUser(null);
+    navigate("/login");
   };
 
   return (
     <header style={styles.header}>
-      <div style={styles.logo}>
-        <Link to="/" style={styles.logoText}>Clinova</Link>
-      </div>
+      <Link to="/" style={styles.logo}>Clinova</Link>
 
       <nav style={styles.nav}>
-        <Link to="/" style={styles.navLink}>Home</Link>
-        <Link to="/about" style={styles.navLink}>About</Link>
-        <Link to="/service" style={styles.navLink}>Services</Link>
-        <Link to="/contact" style={styles.navLink}>Contact</Link>
-        {isLoggedIn && <Link to="/appointments" style={styles.navLink}>Book Appointment</Link>}
+        <Link to="/">Home</Link>
+        <Link to="/contact">Contact</Link>
+        <Link to="/appointments">Appointments</Link>
+        <Link to="/lab">Lab</Link>
       </nav>
 
-      <div style={styles.actions}>
-        {/* Theme toggle */}
+      <div style={styles.right}>
+        {/* Theme Toggle */}
         <button onClick={toggleTheme} style={styles.themeBtn}>
           {theme === "dark" ? "☀️" : "🌙"}
         </button>
 
-        {/* Language select */}
-        <select
-          value={language}
-          onChange={(e) => setLanguage(e.target.value)}
-          style={styles.langSelect}
-        >
-          <option value="en">English</option>
-          <option value="hi">Hindi</option>
-          <option value="ml">Malayalam</option>
-        </select>
-
         {!isLoggedIn ? (
           <Link to="/login" style={styles.loginBtn}>Login</Link>
         ) : (
-          <div style={styles.profileWrapper}>
+          <div style={{ position: "relative" }}>
             <img
-              src="https://i.pravatar.cc/40"
-              alt="Profile"
-              style={styles.profileIcon}
-              onClick={() => setShowProfileMenu(!showProfileMenu)}
+              src={`https://i.pravatar.cc/40?u=${user.email}`}
+              alt="profile"
+              style={styles.avatar}
+              onClick={() => setShowMenu(!showMenu)}
             />
-            {showProfileMenu && (
-              <div style={styles.dropdown}>
-                <button onClick={handleProfile} style={styles.dropdownBtn}>Full Profile</button>
-                <button onClick={handleLogout} style={styles.dropdownBtn}>Logout</button>
+
+            {showMenu && (
+              <div style={styles.menu}>
+                <button
+                  style={styles.menuBtn}
+                  onClick={() => {
+                    navigate("/user");
+                    setShowMenu(false);
+                  }}
+                >
+                  View Profile
+                </button>
+                <button
+                  style={styles.menuBtn}
+                  onClick={logout}
+                >
+                  Logout
+                </button>
               </div>
             )}
           </div>
@@ -83,72 +96,47 @@ function Header({ toggleTheme, theme }) {
 
 const styles = {
   header: {
+    padding: "15px 30px",
+    background: "#68686aff",
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    padding: "15px 30px",
-    background: "#3A8DFF",
-    color: "#fff",
-    position: "sticky",
-    top: 0,
-    zIndex: 999,
+    color: "#fff"
   },
-  logoText: { color: "#fff", fontWeight: "bold", textDecoration: "none", fontSize: "1.5rem" },
+  logo: { color: "#fff", fontWeight: "bold", textDecoration: "none", fontSize: "20px" },
   nav: { display: "flex", gap: "20px" },
-  navLink: { color: "#fff", textDecoration: "none", fontWeight: 500 },
-  actions: { display: "flex", alignItems: "center", gap: "10px" },
+  right: { display: "flex", gap: "12px", alignItems: "center" },
   loginBtn: {
-    padding: "8px 15px",
+    background: "#22c55e",
+    padding: "8px 14px",
     borderRadius: "6px",
-    background: "#10b981",
-    border: "none",
-    cursor: "pointer",
     color: "#fff",
     textDecoration: "none",
+    cursor: "pointer"
   },
-  profileWrapper: { position: "relative" },
-  profileIcon: {
-    width: "40px",
-    height: "40px",
-    borderRadius: "50%",
-    cursor: "pointer",
-  },
-  dropdown: {
+  avatar: { width: 40, height: 40, borderRadius: "50%", cursor: "pointer" },
+  menu: {
     position: "absolute",
-    top: "50px",
     right: 0,
+    top: "50px",
     background: "#fff",
-    color: "#333",
-    borderRadius: "8px",
-    boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
+    color: "#000",
+    borderRadius: "6px",
+    boxShadow: "0 4px 10px rgba(0,0,0,.2)",
     display: "flex",
     flexDirection: "column",
     minWidth: "150px",
   },
-  dropdownBtn: {
+  menuBtn: {
     padding: "10px",
     border: "none",
     background: "transparent",
     textAlign: "left",
     cursor: "pointer",
-    fontWeight: 500,
-    width: "100%",
     borderBottom: "1px solid #eee",
+    fontWeight: 500,
   },
-  themeBtn: {
-    padding: "6px 10px",
-    borderRadius: "6px",
-    cursor: "pointer",
-    background: "#fff",
-    color: "#3A8DFF",
-    fontWeight: "bold",
-  },
-  langSelect: {
-    padding: "6px",
-    borderRadius: "6px",
-    border: "none",
-    cursor: "pointer",
-  },
+  themeBtn: { padding: "6px 10px", borderRadius: "6px", cursor: "pointer" }
 };
 
 export default Header;

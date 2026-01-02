@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "./Header";
-// import { loginUser } from "../services/AllApi"; // Ensure AllApi.js exports loginUser as a named export
-import { loginUser } from "../Services/allAPI";
+
 function Login() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
@@ -22,15 +21,21 @@ function Login() {
     }
 
     try {
-      const res = await loginUser({ email, password, role });
-      if (res.data.token) {
-        localStorage.setItem("token", res.data.token);
-        localStorage.setItem("role", res.data.role);
-        localStorage.setItem("name", res.data.name);
-        localStorage.setItem("email", res.data.email);
-        showToast("✅ Login Successful");
-        setTimeout(() => navigate("/home"), 1500);
-      }
+      // Simulated login (replace with real API later)
+      // Here, every login succeeds for demo
+      const fakeToken = "demo-token-12345";
+      const userData = {
+        name: email.split("@")[0],
+        email,
+        role,
+      };
+
+      // Save in localStorage
+      localStorage.setItem("token", fakeToken);
+      localStorage.setItem("user", JSON.stringify(userData));
+
+      showToast("✅ Login Successful");
+      setTimeout(() => navigate("/home"), 1500);
     } catch (error) {
       showToast("❌ Invalid Credentials");
     }

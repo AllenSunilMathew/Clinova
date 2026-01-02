@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { fetchDoctors, bookAppointment } from "../services/AllApi";
 
 function Appointment() {
   const [user, setUser] = useState({});

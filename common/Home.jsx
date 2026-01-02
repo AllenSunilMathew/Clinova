@@ -1,5 +1,6 @@
 import React from "react";
 import Header from "./Header";
+import { Link } from "react-router-dom";
 function Home() {
   return (
     <>
@@ -11,8 +12,10 @@ function Home() {
             Welcome to <span>Clinova</span>
           </h1>
           <p>Your smart healthcare platform for everyone</p>
-          <button className="cta">Book Appointment</button>
-        </div>
+<Link to="/appointments">
+            <button className="cta">Book Appointment</button>
+  
+</Link>        </div>
       </section>
 
       {/* FEATURES SECTION */}

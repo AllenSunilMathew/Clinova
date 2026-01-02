@@ -15,30 +15,30 @@ function Register() {
     setTimeout(() => setToast(""), 2500);
   };
 
-  const handleRegister = async () => {
+  const handleRegister = () => {
     if (!name || !email || !password) {
       showToast("⚠️ Please fill all fields");
       return;
     }
 
-    try {
-      const res = await fetch("http://localhost:5000/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password, role }),
-      });
+    // Get existing users from localStorage
+    const existingUsers = JSON.parse(localStorage.getItem("users")) || [];
 
-      const data = await res.json();
-
-      if (res.status === 201) {
-        showToast("✅ Registration successful");
-        setTimeout(() => navigate("/login"), 1500);
-      } else {
-        showToast(data.message || "❌ Registration failed");
-      }
-    } catch (error) {
-      showToast("❌ Server error");
+    // Check duplicate email
+    const duplicate = existingUsers.find((u) => u.email === email);
+    if (duplicate) {
+      showToast("❌ Email already registered");
+      return;
     }
+
+    // Create new user
+    const newUser = { name, email, password, role };
+    existingUsers.push(newUser);
+
+    localStorage.setItem("users", JSON.stringify(existingUsers));
+    showToast("✅ Registration successful");
+
+    setTimeout(() => navigate("/login"), 1500);
   };
 
   return (
@@ -69,7 +69,7 @@ function Register() {
               type="text"
               placeholder="Full Name"
               value={name}
-              onChange={e => setName(e.target.value)}
+              onChange={(e) => setName(e.target.value)}
               style={inputStyle}
             />
 
@@ -77,7 +77,7 @@ function Register() {
               type="email"
               placeholder="Email Address"
               value={email}
-              onChange={e => setEmail(e.target.value)}
+              onChange={(e) => setEmail(e.target.value)}
               style={inputStyle}
             />
 
@@ -85,13 +85,13 @@ function Register() {
               type="password"
               placeholder="Password"
               value={password}
-              onChange={e => setPassword(e.target.value)}
+              onChange={(e) => setPassword(e.target.value)}
               style={inputStyle}
             />
 
             <select
               value={role}
-              onChange={e => setRole(e.target.value)}
+              onChange={(e) => setRole(e.target.value)}
               style={{ ...inputStyle, color: "#333" }}
             >
               <option value="user">User</option>
@@ -101,8 +101,8 @@ function Register() {
             <button
               onClick={handleRegister}
               style={buttonStyle}
-              onMouseOver={e => (e.target.style.transform = "scale(1.05)")}
-              onMouseOut={e => (e.target.style.transform = "scale(1)")}
+              onMouseOver={(e) => (e.target.style.transform = "scale(1.05)")}
+              onMouseOut={(e) => (e.target.style.transform = "scale(1)")}
             >
               Register
             </button>
